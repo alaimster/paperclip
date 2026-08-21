@@ -2348,6 +2348,15 @@ export function sanitizeInheritedPaperclipEnv(baseEnv: NodeJS.ProcessEnv): NodeJ
   return env;
 }
 
+/** Host credentials belong to the server; agent credentials are projected explicitly. */
+export function sanitizeInheritedAdapterEnv(baseEnv: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const env = sanitizeInheritedPaperclipEnv(baseEnv);
+  for (const key of Object.keys(env)) {
+    if (SENSITIVE_ENV_KEY.test(key) || key === "DATABASE_URL") delete env[key];
+  }
+  return env;
+}
+
 export function defaultPathForPlatform() {
   if (process.platform === "win32") {
     return "C:\\Windows\\System32;C:\\Windows;C:\\Windows\\System32\\Wbem";
